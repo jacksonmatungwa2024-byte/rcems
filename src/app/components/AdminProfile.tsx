@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function UserProfile() {
+export default function UserProfile(): JSX.Element {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
