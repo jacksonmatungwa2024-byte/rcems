@@ -1,0 +1,62 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 1rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  background: #6a1b9a;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.info h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #4a148c;
+}
+
+.role {
+  font-weight: bold;
+  color: #6a1b9a;
+  margin: 0.3rem 0;
+}
+
+.meta {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.metadata {
+  margin-top: 1rem;
+  background: #f9f9ff;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-weight: bold;
+  color: #6a1b9a;
+  margin-top: 2rem;
+}

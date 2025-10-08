@@ -1,0 +1,145 @@
+.container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: Inter, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backBtn {
+  padding: 6px 12px;
+  background: #eee;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.searchGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.searchGroup input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  flex: 1;
+}
+
+.refreshBtn {
+  padding: 8px 12px;
+  background: #6a1b9a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.selectBtn {
+  padding: 6px 10px;
+  background: #9c27b0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.lessonPanel {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.lessonInputs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.lessonInputs input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.previousLessons,
+.todayLessons {
+  margin-top: 16px;
+}
+
+.previousLessons ul,
+.todayLessons ul {
+  padding-left: 20px;
+}
+
+.progressBarContainer {
+  height: 10px;
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progressBar {
+  height: 100%;
+  background: #6a1b9a;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.approvalBtn {
+  margin-top: 12px;
+  padding: 10px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.approvalBtn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 16px;
+  padding: 10px;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 6px;
+  color: #856404;
+  font-weight: 600;
+}

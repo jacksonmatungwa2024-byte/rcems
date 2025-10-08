@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.*
+jspm_packages/
+bower_components/
+web_modules/
+
+# Build output
+.next/
+out/
+.nuxt/
+dist/
+build/
+.cache/
+.parcel-cache/
+.vuepress/dist/
+.svelte-kit/
+.docusaurus/
+.serverless/
+.fusebox/
+.dynamodb/
+.firebase/
+
+# Logs and debug
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# Cache
+.npm
+.eslintcache
+.stylelintcache
+.node_repl_history
+.yarn-integrity
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Env files
+.env
+.env.*
+!.env.example
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+.DS_Store
+*.pem
+*.tgz
+.lock-wscript
+.tern-port
+.vscode-test

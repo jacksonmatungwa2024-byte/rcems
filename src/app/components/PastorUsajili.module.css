@@ -1,0 +1,258 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    min-width: 320px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    color: #222;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 900;
+    color: #3c1363;
+  }
+  
+  .subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+  }
+  
+  .headerActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .label {
+    font-weight: 700;
+    color: #666;
+    font-size: 13px;
+  }
+  
+  .checkbox {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #fff;
+    color: #4a148c;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .tabActive {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: linear-gradient(90deg,#6a1b9a,#9c27b0);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .error {
+    color: crimson;
+  }
+  
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #efe6fb;
+    min-width: 220px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .primary {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #6a1b9a;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  .outline {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6dff2;
+    background: #fff;
+    cursor: pointer;
+  }
+  
+  .pager {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .pagerBtn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #e6dff2;
+    background: #fff;
+    cursor: pointer;
+  }
+  
+  .pagerInfo {
+    color: #666;
+  }
+  
+  .tableWrap {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(15,23,42,0.03);
+    background: #fff;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+  }
+  
+  .table thead th {
+    background: #fbf8ff;
+    padding: 10px;
+    font-weight: 800;
+    border-bottom: 1px solid #f0e7fa;
+    text-align: left;
+  }
+  
+  .cell {
+    padding: 8px 10px;
+    border-bottom: 1px dashed rgba(15,23,42,0.04);
+  }
+  
+  .filterGroup {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .filter {
+    padding: 8px;
+    border-radius: 8px;
+    background: #fff;
+    border: none;
+    color: #4a148c;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  .filterActive {
+    padding: 8px;
+    border-radius: 8px;
+    background: #6a1b9a;
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  .subTabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .approveBtn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .rejectBtn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* responsive for tablets and small laptops */
+  @media (max-width: 900px) {
+    .table { min-width: 600px; }
+    .input { min-width: 140px; }
+    .title { font-size: 17px; }
+    .tab, .tabActive { padding: 7px 10px; font-size: 14px; }
+  }
+  
+  /* smartphones portrait */
+  @media (max-width: 480px) {
+    .container { padding: 10px; gap: 10px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .headerActions { width: 100%; display: flex; justify-content: flex-start; gap: 10px; }
+    .title { font-size: 16px; }
+    .subtitle { font-size: 12px; }
+    .tabs { gap: 6px; padding-bottom: 6px; }
+    .controls { flex-direction: column; align-items: stretch; gap: 8px; }
+    .input { min-width: 100%; width: 100%; }
+    .primary, .outline { width: 100%; justify-content: center; }
+    .pager { margin-left: 0; width: 100%; justify-content: space-between; }
+    .table { min-width: 0; font-size: 13px; }
+    .table thead th { padding: 8px; font-size: 13px; }
+    .cell { padding: 8px; font-size: 13px; }
+    .tableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .filter, .filterActive, .tab, .tabActive { font-size: 13px; padding: 7px 10px; }
+  }
+  
+  /* very small phones */
+  @media (max-width: 360px) {
+    .title { font-size: 15px; }
+    .subtitle { font-size: 11px; }
+    .input { padding: 7px; }
+    .primary, .outline { padding: 7px; }
+    .approveBtn, .rejectBtn, .pagerBtn { padding: 6px 8px; font-size: 12px; }
+    .table thead th { font-size: 12px; padding: 6px; }
+    .cell { font-size: 12px; padding: 6px; }
+  }
+  

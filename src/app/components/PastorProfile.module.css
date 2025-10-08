@@ -1,0 +1,194 @@
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #222;
+  background: linear-gradient(to bottom right, #f3e5f5, #ede7f6);
+  min-height: 100vh;
+}
+
+.card {
+  width: 100%;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 26px rgba(20,10,40,0.05);
+  border: 1px solid rgba(15,23,42,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.6s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#6a1b9a,#9c27b0);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 28px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.avatarImage {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.titleBlock {
+  flex: 1;
+}
+
+.name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #3c1363;
+}
+
+.meta {
+  color: #666;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.editBtn, .saveBtn, .cancelBtn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease;
+}
+
+.editBtn { background: #6a1b9a; color: #fff; }
+.saveBtn { background: #16a34a; color: #fff; }
+.cancelBtn { background: #ef4444; color: #fff; }
+
+.editBtn:hover, .saveBtn:hover, .cancelBtn:hover {
+  transform: scale(1.05);
+}
+
+.error {
+  color: crimson;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.success {
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 700;
+}
+
+.value {
+  font-size: 15px;
+  color: #333;
+  padding: 10px;
+  background: #fbf8ff;
+  border-radius: 10px;
+}
+
+.input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #efe6fb;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 15px;
+}
+
+.textarea {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #efe6fb;
+  min-height: 120px;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 15px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: 13px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.small {
+  font-weight: 700;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .card { padding: 18px; }
+  .avatar, .avatarImage { width: 64px; height: 64px; font-size: 24px; }
+  .name { font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+  .card { padding: 16px; border-radius: 12px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .actions { width: 100%; justify-content: space-between; }
+  .row { flex-direction: column; }
+  .field { min-width: 100%; }
+  .avatar, .avatarImage { width: 56px; height: 56px; font-size: 20px; }
+  .name { font-size: 18px; }
+  .input, .textarea { font-size: 14px; }
+  .editBtn, .saveBtn, .cancelBtn { padding: 8px 12px; font-size: 14px; width: auto; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
