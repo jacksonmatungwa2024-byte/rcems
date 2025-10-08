@@ -1,6 +1,9 @@
 "use client"
+import { ReactElement } from "react";
 
-import React, { useEffect, useState } from "react"
+
+
+import  { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 import AdminTabManager from "../components/AdminTabManager"
@@ -29,7 +32,10 @@ const tabs = [
   { id: "profile", label: "👤 Profile", component: <AdminProfile /> }
 ]
 
-export default function AdminPanel(): JSX.Element {
+
+
+export default function AdminPanel(): ReactElement {
+
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("tabManager")
   const [isMobile, setIsMobile] = useState(false)
