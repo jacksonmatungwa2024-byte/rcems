@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function ForgotPassword(): JSX.Element {
+export default function ForgotPassword() {
   const [email, setEmail] = useState("")
   const [otp, setOtp] = useState("")
   const [status, setStatus] = useState("")

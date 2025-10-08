@@ -6,7 +6,7 @@ import MediaPanel from "../components/MediaPanel"
 import StoragePanel from "../components/StoragePanel"
 import UsagePanel from "../components/UsagePanel"
 import MediaProfile from "../components/MediaProfile"
-import MessagesPanel from "../components/MessagingApp"
+
 import styles from "../components/MediaDashboard.module.css"
 
 const supabase = createClient(
@@ -14,24 +14,37 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const allTabs = [
-  { key: "media", label: "📣 Matangazo", component: <MediaPanel /> },
-  { key: "storage", label: "🖼️ Gallery", component: <StoragePanel /> },
-  { key: "usage", label: "📊 Matumizi", component: <UsagePanel /> },
-  { key: "profile", label: "🙍‍♂️ Profile", component: <MediaProfile userId={1} /> },
-  
+interface TabBase {
+  key: string
+  label: string
+}
+
+interface TabWithComponent<P = {}> extends TabBase {
+  component: React.ComponentType<P>
+}
+
+const allTabs: Array<TabWithComponent<any>> = [
+  { key: "media", label: "📣 Matangazo", component: MediaPanel },
+  { key: "storage", label: "🖼️ Gallery", component: StoragePanel },
+  { key: "usage", label: "📊 Matumizi", component: UsagePanel },
+  {
+    key: "profile",
+    label: "🙍‍♂️ Profile",
+    component: MediaProfile as React.ComponentType<{ userId: number }>,
+  },
 ]
 
-export default function MediaDashboard(): JSX.Element {
+export default function MediaDashboard() {
   const [activeTab, setActiveTab] = useState("media")
   const [allowedTabs, setAllowedTabs] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [userId, setUserId] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchUserTabs = async () => {
       const {
         data: { user },
-        error
+        error,
       } = await supabase.auth.getUser()
 
       if (error || !user) {
@@ -39,24 +52,14 @@ export default function MediaDashboard(): JSX.Element {
         return
       }
 
-      const { id, email } = user
+      const email = user.email
 
-      let { data: userData, error: userErr } = await supabase
+      // ✅ Fetch user record to get numeric `id`
+      const { data: userData, error: userErr } = await supabase
         .from("users")
-        .select("role, metadata")
-        .eq("id", id)
+        .select("id, role, metadata")
+        .eq("email", email)
         .single()
-
-      if (userErr || !userData) {
-        const fallback = await supabase
-          .from("users")
-          .select("role, metadata")
-          .eq("email", email)
-          .single()
-
-        userData = fallback.data
-        userErr = fallback.error
-      }
 
       if (userErr || !userData) {
         alert("Haiwezekani kupata metadata ya mtumiaji.")
@@ -64,10 +67,13 @@ export default function MediaDashboard(): JSX.Element {
         return
       }
 
+      // ✅ Now we can safely set numeric userId
+      setUserId(userData.id)
+
       const { role, metadata } = userData
 
       if (role === "admin") {
-        setAllowedTabs(allTabs.map(t => t.key)) // Admin sees all
+        setAllowedTabs(allTabs.map((t) => t.key)) // Admin sees all
         setActiveTab("media")
       } else {
         const tabs = metadata?.allowed_tabs
@@ -97,8 +103,8 @@ export default function MediaDashboard(): JSX.Element {
       <div className={styles.layout}>
         <aside className={styles.sidebar}>
           {allTabs
-            .filter(tab => allowedTabs.includes(tab.key))
-            .map(tab => (
+            .filter((tab) => allowedTabs.includes(tab.key))
+            .map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
@@ -111,10 +117,16 @@ export default function MediaDashboard(): JSX.Element {
 
         <main className={styles.panel}>
           {allTabs
-            .filter(tab => tab.key === activeTab && allowedTabs.includes(tab.key))
-            .map(tab => (
-              <React.Fragment key={tab.key}>{tab.component}</React.Fragment>
-            ))}
+            .filter(
+              (tab) => tab.key === activeTab && allowedTabs.includes(tab.key)
+            )
+            .map((tab) => {
+              const Component = tab.component
+              if (tab.key === "profile" && userId !== null) {
+                return <Component key={tab.key} userId={userId} />
+              }
+              return <Component key={tab.key} />
+            })}
         </main>
       </div>
     </div>

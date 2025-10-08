@@ -1,13 +1,23 @@
 "use client"
-
+import type { TabType } from "../usher/page"; // ✅ import the tab type
 import React, { useState, useEffect } from "react"
 import { createClient } from "@supabase/supabase-js"
 import styles from "./MafunzoMuumini.module.css"
+import type { SetActiveTab } from "@/types/tabs";
+
+interface MafunzoMuuminiProps {
+  setActiveTab: SetActiveTab;
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
+
+
+interface Props {
+  setActiveTab: React.Dispatch<React.SetStateAction<TabType>>; // ✅ correct type
+}
 
 type Muumini = {
   id?: string
@@ -19,7 +29,8 @@ type Muumini = {
 
 const tareheLeo = new Date().toISOString().split("T")[0]
 
-export default function MafunzoMuumini({ setActiveTab }: { setActiveTab: (tab: string) => void }) {
+
+export default function MafunzoMuumini({ setActiveTab }: Props) {
   const [searchNamba, setSearchNamba] = useState("")
   const [searchMajina, setSearchMajina] = useState("")
   const [waliyookoka, setWaliyookoka] = useState<Muumini[]>([])

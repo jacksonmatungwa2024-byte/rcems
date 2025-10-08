@@ -1,13 +1,21 @@
 "use client"
-
+import type { TabType } from "../usher/page"; // ✅ import the tab type
 import React, { useEffect, useState } from "react"
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
+import type { SetActiveTab } from "@/types/tabs";
+
+interface SajiliUshuhudaProps {
+  setActiveTab: SetActiveTab;
+}
 
 const supabase: SupabaseClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
 )
 
+interface SajiliUshuhudaProps {
+  setActiveTab: React.Dispatch<React.SetStateAction<TabType>>; // ✅ correct type
+}
 type WatuRow = {
   id?: number
   muumini_id?: number
@@ -17,8 +25,8 @@ type WatuRow = {
   [key: string]: any
 }
 
-type Props = {
-  setActiveTab?: (tab: string) => void
+interface Props {
+  setActiveTab?: (tab: TabType) => void;
 }
 
 const container: React.CSSProperties = {

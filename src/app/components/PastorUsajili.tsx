@@ -55,7 +55,7 @@ type WokovuRow = {
   [key: string]: any
 }
 
-export default function PastorUsajili(): JSX.Element {
+export default function PastorUsajili() {
   const [active, setActive] = useState<"waliosajiliwa" | "mahadhurio" | "wachanga">("waliosajiliwa")
   const [wachangaSub, setWachangaSub] = useState<"approval" | "waliokoka">("approval")
 
@@ -293,21 +293,31 @@ export default function PastorUsajili(): JSX.Element {
 
   /* ---------- helpers ---------- */
 
-  function downloadCSV(rows: any[], filename = "export.csv") {
-    if (!rows || rows.length === 0) {
-      alert("Hakuna data ya kupakua")
-      return
-    }
-    const keys = Array.from(rows.reduce((s, r) => { Object.keys(r || {}).forEach(k => s.add(k)); return s }, new Set<string>()))
-    const csv = [keys.join(",")].concat(rows.map(r => keys.map(k => `"${String(r[k] ?? "").replace(/"/g, '""')}"`).join(","))).join("\n")
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
+  function downloadCSV<T extends Record<string, any>>(rows: T[], filename = "export.csv") {
+  if (!rows || rows.length === 0) {
+    alert("Hakuna data ya kupakua")
+    return
   }
+
+  const keys = Array.from(rows.reduce((s, r) => {
+    Object.keys(r).forEach(k => s.add(k))
+    return s
+  }, new Set<string>()))
+
+  const csv = [
+    keys.join(","),
+    ...rows.map(r => keys.map(k => `"${String(r[k] ?? "").replace(/"/g, '""')}"`).join(","))
+  ].join("\n")
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 
   return (
     <div className={styles.container}>

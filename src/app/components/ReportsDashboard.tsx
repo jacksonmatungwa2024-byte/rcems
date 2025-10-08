@@ -1,7 +1,12 @@
 "use client"
-
+import type { TabType } from "../usher/page"; // ✅ import the same type from page.tsx
 import React, { useEffect, useState, useRef } from "react"
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
+import type { SetActiveTab } from "@/types/tabs";
+
+interface ReportsDashboardProps {
+  setActiveTab: SetActiveTab;
+}
 
 const supabase: SupabaseClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -10,9 +15,12 @@ const supabase: SupabaseClient = createClient(
 
 type Row = { [key: string]: any }
 
-type Props = {
-  setActiveTab?: (tab: string) => void
+
+interface Props {
+  setActiveTab: React.Dispatch<React.SetStateAction<TabType>>;
 }
+
+
 
 // Existing style objects
 const container: React.CSSProperties = {
@@ -59,7 +67,8 @@ const card: React.CSSProperties = {
  * Loads data from tables with optional date filtering.
  * Supports auto-refresh, CSV/Excel export, print/PDF, and tabular views.
  */
-export default function ReportsDashboard({ setActiveTab }: Props) {
+
+export default function SajiliUshuhuda({ setActiveTab }: Props) {
   const [date, setDate] = useState<string>("") // empty = all-time; format: YYYY-MM-DD, YYYY-MM, YYYY
   const [loading, setLoading] = useState<boolean>(false)
   const [summary, setSummary] = useState({
@@ -368,7 +377,10 @@ export default function ReportsDashboard({ setActiveTab }: Props) {
         {/* Table and actions */}
         <div style={subPanel}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#4b2a5a" }}>{activeGroup.toUpperCase()} — Table</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#4b2a5a" }}>
+  {(activeGroup as string).toUpperCase()} — Table
+</div>
+
             <div style={{ fontSize: 12, color: "#666" }}>{loading ? "Loading..." : `Rows: ${rows[activeGroup].length}`}</div>
           </div>
           {/* Data table */}

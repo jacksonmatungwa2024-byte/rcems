@@ -7,7 +7,7 @@ import FinancePanel from "../components/FinancePanel"
 import Michango from "../components/Michango"
 import FinanceReports from "../components/FinanceReports"
 import FinanceProfile from "../components/FinanceProfile"
-import MessagesPanel from "../components/MessagingApp"
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

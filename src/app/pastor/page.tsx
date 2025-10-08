@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import PastorUsajili from "../components/PastorUsajili"
 import BudgetsPanel from "../components/BudgetsPanel"
-import MessagesPanel from "../components/MessagingApp"
+
 import ReportsDashboard2 from "../components/ReportsDashboard2"
 import PastorProfile from "../components/PastorProfile"
 import PastorSummary from "../components/PastorSummary"
@@ -34,7 +34,7 @@ const tabs = [
   { key: "dashboard", label: "🏠 Dashboard" },
   { key: "usajili", label: "🗂️ *Usajili*" },
   { key: "bajeti", label: "💰 Bajeti" },
-  ,
+  
   { key: "reports", label: "📊 Reports" },
   { key: "summary", label: "📝 Muhtasari" },
   { key: "approval", label: "✅ Approval" },
@@ -44,7 +44,7 @@ const tabs = [
   { key: "profile", label: "👤 Profile" }
 ]
 
-export default function PastorPage(): JSX.Element {
+export default function PastorPage() {
   const [active, setActive] = useState("dashboard")
   const [allowedTabs, setAllowedTabs] = useState<string[]>([])
   const [username, setUsername] = useState("")
@@ -184,7 +184,7 @@ export default function PastorPage(): JSX.Element {
             {active === "dashboard" && <div style={{ fontWeight: 900, color: "#3c1363" }}>Pastor Dashboard</div>}
             {active === "usajili" && <PastorUsajili />}
             {active === "bajeti" && <BudgetsPanel />}
-            {active === "messages" && <MessagesPanel />}
+            
             {active === "reports" && <ReportsDashboard2 />}
             {active === "summary" && <PastorSummary />}
             {active === "approval" && <SummaryApproval />}

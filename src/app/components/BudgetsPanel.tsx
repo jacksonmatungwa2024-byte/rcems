@@ -27,7 +27,7 @@ type BudgetRow = {
   [key: string]: any
 }
 
-export default function BudgetsPanel(): JSX.Element {
+export default function BudgetsPanel() {
   const [sub, setSub] = useState<"pending" | "approved" | "declined">("pending")
   const [pending, setPending] = useState<BudgetRow[]>([])
   const [approved, setApproved] = useState<BudgetRow[]>([])
@@ -118,21 +118,32 @@ export default function BudgetsPanel(): JSX.Element {
     }
   }
 
-  function downloadCSV(rows: any[], filename = "export.csv") {
-    if (!rows || rows.length === 0) {
-      alert("Hakuna data ya kupakua")
-      return
-    }
-    const keys = Array.from(rows.reduce((s, r) => { Object.keys(r || {}).forEach(k => s.add(k)); return s }, new Set<string>()))
-    const csv = [keys.join(",")].concat(rows.map(r => keys.map(k => `"${String(r[k] ?? "").replace(/"/g, '""')}"`).join(","))).join("\n")
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
+  function downloadCSV(rows: Record<string, any>[], filename = "export.csv") {
+  if (!rows || rows.length === 0) {
+    alert("Hakuna data ya kupakua")
+    return
   }
+  const keys = Array.from(
+  rows.reduce((s: Set<string>, r: Record<string, any>) => {
+    Object.keys(r || {}).forEach(k => s.add(k))
+    return s
+  }, new Set<string>())
+)
+
+  const csv = [keys.join(",")].concat(
+    rows.map(r =>
+      keys.map(k => `"${String(r[k] ?? "").replace(/"/g, '""')}"`).join(",")
+    )
+  ).join("\n")
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
   const tableHeader = (label: string) => <th className={styles.th}>{label}</th>
 

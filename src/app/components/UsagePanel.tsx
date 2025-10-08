@@ -17,7 +17,7 @@ const supabase = createClient(
 
 const STORAGE_QUOTA = 5 * 1024 * 1024 * 1024 // 5 GB
 
-export default function UsagePanel(): JSX.Element {
+export default function UsagePanel() {
   const [usedBytes, setUsedBytes] = useState(0)
   const [eventUsage, setEventUsage] = useState<Record<string, number>>({})
   const [history, setHistory] = useState<{ date: string; total: number }[]>([])

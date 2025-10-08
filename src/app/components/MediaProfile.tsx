@@ -1,79 +1,121 @@
-"use client"
-
 import React, { useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js"
-import styles from "../components/MediaProfile.module.css"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-type User = {
-  id: number
-  username?: string
-  full_name: string
-  email?: string
-  phone?: string
-  role: string
-  branch?: string
-  bio?: string
-  is_active: boolean
-  last_login?: string
-  created_at: string
-  updated_at: string
-  metadata?: any
+interface MediaProfileProps {
+  userId: number
 }
 
-export default function MediaProfile({ userId }: { userId: number }): JSX.Element {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(false)
+export default function MediaProfile({ userId }: MediaProfileProps) {
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!userId) return
-    fetchUser()
+    loadUser()
   }, [userId])
 
-  async function fetchUser() {
-    setLoading(true)
+  const loadUser = async () => {
+    if (!userId) {
+      setUser(null)
+      setLoading(false)
+      return
+    }
+
     const { data, error } = await supabase
       .from("users")
       .select("*")
       .eq("id", userId)
       .single()
 
-    if (error) {
-      console.error("User fetch error:", error)
-      setUser(null)
-    } else {
+    if (!error && data) {
       setUser(data)
+    } else {
+      setUser(null)
     }
+
     setLoading(false)
   }
 
-  if (loading) return <div className={styles.loading}>Loading profile...</div>
-  if (!user) return <div className={styles.error}>User not found</div>
+  if (loading) return <p style={styles.loading}>⏳ Loading profile...</p>
+  if (!user) return <p style={styles.error}>🚫 Hakuna taarifa za mtumiaji.</p>
 
   return (
-    <div className={styles.card}>
-      <div className={styles.avatar}>{user.full_name.slice(0, 1).toUpperCase()}</div>
-      <div className={styles.info}>
-        <h2>{user.full_name}</h2>
-        <p className={styles.role}>{user.role} · {user.branch ?? "—"}</p>
-        <p>{user.bio ?? "—"}</p>
-        <div className={styles.meta}>
-          <span>📧 {user.email ?? "—"}</span>
-          <span>📱 {user.phone ?? "—"}</span>
-          <span>🕒 Joined: {user.created_at.split("T")[0]}</span>
-          {user.last_login && <span>🔓 Last login: {new Date(user.last_login).toLocaleString()}</span>}
+    <div style={styles.container}>
+      <h2 style={styles.header}>🙋 Karibu {user.full_name}</h2>
+      <div style={styles.card}>
+        <img
+          src={user.profile_url || "default-profile.png"}
+          alt="Profile"
+          style={styles.avatar}
+        />
+        <div style={styles.info}>
+          <p><strong>📧 Email:</strong> {user.email}</p>
+          <p><strong>📞 Simu:</strong> {user.phone || "—"}</p>
+          <p><strong>🧑‍💼 Nafasi:</strong> {user.role}</p>
+          <p><strong>🌿 Tawi:</strong> {user.branch || "—"}</p>
+          <p><strong>🧠 Bio:</strong> {user.bio || "—"}</p>
+          <p><strong>🕒 Membership:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
         </div>
-        {user.metadata && (
-          <div className={styles.metadata}>
-            <h4>🧠 Metadata</h4>
-            <pre>{JSON.stringify(user.metadata, null, 2)}</pre>
-          </div>
-        )}
       </div>
     </div>
   )
+}
+
+const styles: Record<string, React.CSSProperties> = {
+  container: {
+    padding: 24,
+    maxWidth: 600,
+    margin: "0 auto",
+    fontFamily: "'Segoe UI', Roboto, sans-serif",
+    background: "linear-gradient(to bottom right, #f3e5f5, #ede7f6)",
+    borderRadius: 16,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    animation: "fadeIn 0.6s ease"
+  },
+  header: {
+    fontSize: "1.6rem",
+    fontWeight: 900,
+    color: "#6a1b9a",
+    marginBottom: 16
+  },
+  card: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+    background: "#fff",
+    padding: 20,
+    borderRadius: 16,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "3px solid #6a1b9a",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+  },
+  info: {
+    fontSize: "1rem",
+    color: "#333",
+    textAlign: "left",
+    width: "100%"
+  },
+  loading: {
+    textAlign: "center",
+    fontSize: "1rem",
+    color: "#666",
+    marginTop: 40
+  },
+  error: {
+    textAlign: "center",
+    fontSize: "1rem",
+    color: "#d32f2f",
+    marginTop: 40
+  }
 }

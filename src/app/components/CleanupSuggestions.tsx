@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function CleanupSuggestions(): JSX.Element {
+export default function CleanupSuggestions() {
   const { selectedBucket } = useBucket()
   const [files, setFiles] = useState<any[]>([])
   const [loading, setLoading] = useState(false)

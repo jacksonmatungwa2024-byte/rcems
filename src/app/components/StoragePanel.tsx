@@ -21,7 +21,7 @@ type FileMeta = {
   is_deleted?: boolean
 }
 
-export default function StoragePanel(): JSX.Element {
+export default function StoragePanel(){
   const [tab, setTab] = useState<"upload" | "gallery">("upload")
   const [eventName, setEventName] = useState("")
   const [eventType, setEventType] = useState("")

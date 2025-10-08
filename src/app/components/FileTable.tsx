@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function FileTable(): JSX.Element {
+export default function FileTable() {
   const { selectedBucket } = useBucket()
   const [files, setFiles] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")

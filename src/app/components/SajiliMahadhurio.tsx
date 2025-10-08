@@ -1,106 +1,146 @@
-import { useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import '../styles/SajiliMahadhurio.css' // <-- import the CSS
+import { useState } from "react";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { TabType } from "../usher/page"; // ✅ import the tab type
+import "../styles/SajiliMahadhurio.css";
+import type { SetActiveTab } from "@/types/tabs";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+interface SajiliAliyeokokaProps {
+  setActiveTab: SetActiveTab;
+}
 
-const SajiliMahadhurio = ({ setActiveTab }) => {
-  const [searchNamba, setSearchNamba] = useState('')
-  const [searchMajina, setSearchMajina] = useState('')
-  const [searchResults, setSearchResults] = useState([])
-  const [selectedMuumini, setSelectedMuumini] = useState(null)
+// ---- Supabase setup ----
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
 
-  const [ainaMahadhurio, setAinaMahadhurio] = useState('')
-  const [ainaIbada, setAinaIbada] = useState('')
-  const [tarehe, setTarehe] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [searching, setSearching] = useState(false)
-  const [message, setMessage] = useState('')
+// ---- Types ----
+interface Muumini {
+  id: number;
+  majina: string;
+  muumini_namba: string;
+  simu?: string;
+}
 
-  const handleSearch = async (namba, majina) => {
-    setSearching(true)
+interface Mahadhurio {
+  id?: number;
+  muumini_id: number;
+  muumini_namba: string;
+  majina: string;
+  aina: string;
+  ibada?: string;
+  tarehe: string;
+}
+
+interface SajiliMahadhurioProps {
+  setActiveTab: React.Dispatch<React.SetStateAction<TabType>>; // ✅ correct type
+}
+
+// ---- Component ----
+const SajiliMahadhurio: React.FC<SajiliMahadhurioProps> = ({ setActiveTab }) => {
+  const [searchNamba, setSearchNamba] = useState("");
+  const [searchMajina, setSearchMajina] = useState("");
+  const [searchResults, setSearchResults] = useState<Muumini[]>([]);
+  const [selectedMuumini, setSelectedMuumini] = useState<Muumini | null>(null);
+
+  const [ainaMahadhurio, setAinaMahadhurio] = useState("");
+  const [ainaIbada, setAinaIbada] = useState("");
+  const [tarehe, setTarehe] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // ---- Handlers ----
+  const handleSearch = async (namba: string, majina: string) => {
+    setSearching(true);
     const { data, error } = await supabase
-      .from('watu')
-      .select('*')
-      .or(`simu.ilike.%${namba}%,majina.ilike.%${majina}%`)
-    if (error) {
-      console.error(error)
-      setSearchResults([])
-    } else {
-      setSearchResults(data)
-    }
-    setSearching(false)
-  }
+      .from("watu")
+      .select("*")
+      .or(`simu.ilike.%${namba}%,majina.ilike.%${majina}%`);
 
-  const handleSelectMuumini = (muu) => {
-    setSelectedMuumini(muu)
-    setMessage('')
-  }
+    if (error) {
+      console.error(error);
+      setSearchResults([]);
+    } else {
+      setSearchResults((data as Muumini[]) ?? []);
+    }
+    setSearching(false);
+  };
+
+  const handleSelectMuumini = (muu: Muumini) => {
+    setSelectedMuumini(muu);
+    setMessage("");
+  };
 
   const handleWekaMahadhurio = async () => {
     if (
       !selectedMuumini ||
       !ainaMahadhurio ||
       !tarehe ||
-      (ainaMahadhurio === 'Ibada' && !ainaIbada)
+      (ainaMahadhurio === "Ibada" && !ainaIbada)
     ) {
-      alert('Tafadhali jaza taarifa zote')
-      return
+      alert("Tafadhali jaza taarifa zote");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    const { data: existing } = await supabase
-      .from('mahadhurio')
-      .select('*')
-      .eq('muumini_id', selectedMuumini.id)
-      .eq('tarehe', tarehe)
+    const { data: existing, error: existingError } = await supabase
+      .from("mahadhurio")
+      .select("*")
+      .eq("muumini_id", selectedMuumini.id)
+      .eq("tarehe", tarehe);
 
-    if (existing.length > 0) {
+    if (existingError) {
+      setMessage("Hitilafu wakati wa kutafuta rekodi: " + existingError.message);
+      setLoading(false);
+      return;
+    }
+
+    const existingRecords = (existing as Mahadhurio[]) ?? [];
+
+    if (existingRecords.length > 0) {
       const { error: updateError } = await supabase
-        .from('mahadhurio')
+        .from("mahadhurio")
         .update({
           aina: ainaMahadhurio,
           ibada: ainaIbada,
         })
-        .eq('id', existing[0].id)
+        .eq("id", existingRecords[0].id);
 
       if (updateError) {
-        setMessage('Hitilafu wakati wa kusasisha: ' + updateError.message)
+        setMessage("Hitilafu wakati wa kusasisha: " + updateError.message);
       } else {
         setMessage(
           `Huwezi kujifadhi mahadhurio ya ${selectedMuumini.majina} (${ainaIbada}) mara mbili fuata`
-        )
+        );
       }
     } else {
-      const { error } = await supabase
-        .from('mahadhurio')
-        .insert([
-          {
-            muumini_id: selectedMuumini.id,
-            muumini_namba: selectedMuumini.muumini_namba,
-            majina: selectedMuumini.majina,
-            aina: ainaMahadhurio,
-            ibada: ainaIbada,
-            tarehe: tarehe,
-          },
-        ])
+      const { error } = await supabase.from("mahadhurio").insert([
+        {
+          muumini_id: selectedMuumini.id,
+          muumini_namba: selectedMuumini.muumini_namba,
+          majina: selectedMuumini.majina,
+          aina: ainaMahadhurio,
+          ibada: ainaIbada,
+          tarehe,
+        },
+      ]);
+
       if (error) {
-        setMessage('Hitilafu: ' + error.message)
+        setMessage("Hitilafu: " + error.message);
       } else {
-        setMessage(`✅ Mahadhurio yametunzwa kwa ${selectedMuumini.majina}`)
+        setMessage(`✅ Mahadhurio yametunzwa kwa ${selectedMuumini.majina}`);
       }
     }
 
-    setLoading(false)
+    setLoading(false);
 
     setTimeout(() => {
-      setActiveTab('home')
-    }, 2000)
-  }
+      setActiveTab("home"); // ✅ works safely now
+    }, 2000);
+  };
 
+  // ---- Render ----
   return (
     <div className="wrapper">
       <h2 className="heading">Sajili Mahadhurio</h2>
@@ -112,9 +152,9 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
           placeholder="Namba"
           value={searchNamba}
           onChange={(e) => {
-            const value = e.target.value.replace(/\D/g, '') // digits only
-            setSearchNamba(value)
-            handleSearch(value, searchMajina)
+            const value = e.target.value.replace(/\D/g, "");
+            setSearchNamba(value);
+            handleSearch(value, searchMajina);
           }}
           inputMode="numeric"
           pattern="\d*"
@@ -124,9 +164,9 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
           placeholder="Majina"
           value={searchMajina}
           onChange={(e) => {
-            const value = e.target.value
-            setSearchMajina(value)
-            handleSearch(searchNamba, value)
+            const value = e.target.value;
+            setSearchMajina(value);
+            handleSearch(searchNamba, value);
           }}
         />
         {searching && <p className="message">⏳ Inatafuta...</p>}
@@ -146,7 +186,7 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
             </thead>
             <tbody>
               {searchResults.map((muu, index) => (
-                <tr key={muu.id} className={index % 2 === 0 ? 'tr-even' : ''}>
+                <tr key={muu.id} className={index % 2 === 0 ? "tr-even" : ""}>
                   <td className="td">{index + 1}</td>
                   <td className="td">{muu.muumini_namba}</td>
                   <td className="td">{muu.majina}</td>
@@ -167,7 +207,7 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
 
       {selectedMuumini && (
         <div className="section">
-          <h4>Muumini Amichaguliwa: {selectedMuumini.majina}</h4>
+          <h4>Muumini Amechaguliwa: {selectedMuumini.majina}</h4>
 
           <label className="label">Aina ya Mahadhurio:</label>
           <select
@@ -184,7 +224,7 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
             <option value="Ibada">Ibada</option>
           </select>
 
-          {ainaMahadhurio === 'Ibada' && (
+          {ainaMahadhurio === "Ibada" && (
             <>
               <label className="label">Aina ya Ibada:</label>
               <select
@@ -195,6 +235,7 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
                 <option value="">Chagua</option>
                 <option value="IBADA YA KWANZA">IBADA YA KWANZA</option>
                 <option value="IBADA YA PILI">IBADA YA PILI</option>
+                <option value="IBADA YA MAJIBU">IBADA YA MAJIBU</option>
               </select>
             </>
           )}
@@ -207,15 +248,19 @@ const SajiliMahadhurio = ({ setActiveTab }) => {
             onChange={(e) => setTarehe(e.target.value)}
           />
 
-          <button className="button" onClick={handleWekaMahadhurio} disabled={loading}>
-            {loading ? 'Inashughulikiwa...' : 'Weka Mahadhurio'}
+          <button
+            className="button"
+            onClick={handleWekaMahadhurio}
+            disabled={loading}
+          >
+            {loading ? "Inashughulikiwa..." : "Weka Mahadhurio"}
           </button>
 
           {message && <p className="message">{message}</p>}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SajiliMahadhurio
+export default SajiliMahadhurio;

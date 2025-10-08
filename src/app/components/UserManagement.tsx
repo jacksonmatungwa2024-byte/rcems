@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function UserManagement(): JSX.Element {
+export default function UserManagement(){
   const [users, setUsers] = useState<any[]>([])
   const [saving, setSaving] = useState(false)
 

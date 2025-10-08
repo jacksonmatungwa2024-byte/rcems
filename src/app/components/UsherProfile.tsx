@@ -8,7 +8,11 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function UserProfile(): JSX.Element {
+type UsherProfileProps = {
+  onClose: () => void
+}
+
+export default function UsherProfile({ onClose }: UsherProfileProps) {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -32,10 +36,7 @@ export default function UserProfile(): JSX.Element {
       .eq("email", email)
       .single()
 
-    if (!error && data) {
-      setUser(data)
-    }
-
+    if (!error && data) setUser(data)
     setLoading(false)
   }
 
@@ -44,6 +45,8 @@ export default function UserProfile(): JSX.Element {
 
   return (
     <div style={styles.container}>
+      <button onClick={onClose} style={styles.closeBtn}>← Rudi Nyumbani</button>
+
       <h2 style={styles.header}>🙋 Karibu {user.full_name}</h2>
       <div style={styles.card}>
         <img
@@ -116,5 +119,13 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "1rem",
     color: "#d32f2f",
     marginTop: 40
+  },
+  closeBtn: {
+    border: "none",
+    background: "none",
+    color: "#6a1b9a",
+    fontWeight: 600,
+    cursor: "pointer",
+    marginBottom: 16
   }
-}
+};

@@ -16,7 +16,7 @@ const allTabs = [
   "finance", "michango", "reports_finance"
 ]
 
-export default function AdminTabManager(): JSX.Element {
+export default function AdminTabManager(){
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -44,7 +44,7 @@ export default function AdminTabManager(): JSX.Element {
         if (user.id !== userId) return user
         const currentTabs = user.metadata?.allowed_tabs || []
         const updatedTabs = currentTabs.includes(tab)
-          ? currentTabs.filter(t => t !== tab)
+          ? currentTabs.filter((t: string) => t !== tab)
           : [...currentTabs, tab]
         return {
           ...user,
@@ -75,43 +75,61 @@ export default function AdminTabManager(): JSX.Element {
   }, {} as Record<string, any[]>)
 
   return (
-    <div style={{ padding: 20, fontFamily: "Segoe UI, Roboto, sans-serif" }}>
-      <h2 style={{ color: "#4a148c", fontWeight: 900 }}>🛠️ Tab Manager kwa Kila Paneli</h2>
-      {loading ? (
-        <p>⏳ Inapakia watumiaji...</p>
-      ) : (
-        Object.entries(grouped).map(([role, group]) => (
+  <div style={{ padding: 20, fontFamily: "Segoe UI, Roboto, sans-serif" }}>
+    <h2 style={{ color: "#4a148c", fontWeight: 900 }}>🛠️ Tab Manager kwa Kila Paneli</h2>
+    {loading ? (
+      <p>⏳ Inapakia watumiaji...</p>
+    ) : (
+      Object.entries(grouped).map(([role, group]) => {
+        const usersInRole = group as any[];
+
+        return (
           <div key={role} style={{ marginBottom: 40 }}>
             <h3 style={{ color: "#6a1b9a", fontWeight: 800, marginBottom: 12 }}>
               👥 {role.charAt(0).toUpperCase() + role.slice(1)} Panel
             </h3>
-            {group.map(user => (
-              <div key={user.id} style={{
-                marginBottom: 24,
-                padding: 16,
-                border: "1px solid #ddd",
-                borderRadius: 12,
-                background: "#faf8ff"
-              }}>
+
+            {usersInRole.map((user) => (
+              <div
+                key={user.id}
+                style={{
+                  marginBottom: 24,
+                  padding: 16,
+                  border: "1px solid #ddd",
+                  borderRadius: 12,
+                  background: "#faf8ff",
+                }}
+              >
                 <div style={{ fontWeight: 800, color: "#3c1363" }}>
                   {user.username} ({user.role})
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
-                  {allTabs.map(tab => (
-                    <label key={tab} style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      background: user.metadata?.allowed_tabs?.includes(tab)
-                        ? "#6a1b9a"
-                        : "#e0e0e0",
-                      color: user.metadata?.allowed_tabs?.includes(tab)
-                        ? "#fff"
-                        : "#333",
-                      padding: "6px 10px",
-                      borderRadius: 8,
-                      cursor: "pointer"
-                    }}>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 8,
+                    marginTop: 12,
+                  }}
+                >
+                  {allTabs.map((tab) => (
+                    <label
+                      key={tab}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        background: user.metadata?.allowed_tabs?.includes(tab)
+                          ? "#6a1b9a"
+                          : "#e0e0e0",
+                        color: user.metadata?.allowed_tabs?.includes(tab)
+                          ? "#fff"
+                          : "#333",
+                        padding: "6px 10px",
+                        borderRadius: 8,
+                        cursor: "pointer",
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={user.metadata?.allowed_tabs?.includes(tab) || false}
@@ -122,6 +140,7 @@ export default function AdminTabManager(): JSX.Element {
                     </label>
                   ))}
                 </div>
+
                 <button
                   onClick={() => saveTabs(user.id, user.metadata)}
                   disabled={saving}
@@ -133,25 +152,29 @@ export default function AdminTabManager(): JSX.Element {
                     border: "none",
                     borderRadius: 8,
                     fontWeight: 800,
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   💾 Hifadhi Tab
                 </button>
+
                 {successMap[user.id] && (
-                  <div style={{
-                    marginTop: 8,
-                    fontWeight: 700,
-                    color: "#2e7d32"
-                  }}>
+                  <div
+                    style={{
+                      marginTop: 8,
+                      fontWeight: 700,
+                      color: "#2e7d32",
+                    }}
+                  >
                     ✅ Tabs zimehifadhiwa kwa mafanikio
                   </div>
                 )}
               </div>
             ))}
           </div>
-        ))
-      )}
-    </div>
-  )
+        );
+      })
+       )}
+  </div>
+);
 }

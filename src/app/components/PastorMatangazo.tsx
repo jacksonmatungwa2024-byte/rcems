@@ -4,18 +4,38 @@ import React, { useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 import styles from "./PastorMatangazo.module.css"
 
+// ✅ Define a type for each announcement
+type Announcement = {
+  title: string
+  description: string
+  file: File | null
+  scheduled_for: string
+}
+
+// ✅ Define a type for your user data
+type User = {
+  id: string
+  full_name: string
+  role: string
+  branch: string
+  is_active: boolean
+}
+
+// ✅ Supabase initialization
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
 export default function PastorMatangazo() {
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [branches, setBranches] = useState<string[]>([])
   const [branchFilter, setBranchFilter] = useState("")
   const [selectedUser, setSelectedUser] = useState("")
   const [role, setRole] = useState("")
-  const [announcements, setAnnouncements] = useState([{ title: "", description: "", file: null, scheduled_for: "" }])
+  const [announcements, setAnnouncements] = useState<Announcement[]>([
+    { title: "", description: "", file: null, scheduled_for: "" }
+  ])
   const [message, setMessage] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
@@ -23,6 +43,7 @@ export default function PastorMatangazo() {
     fetchUsers()
   }, [branchFilter])
 
+  // ✅ Type-safe fetch
   async function fetchUsers() {
     const { data, error } = await supabase
       .from("users")
@@ -34,20 +55,36 @@ export default function PastorMatangazo() {
       return
     }
 
-    const filtered = branchFilter ? data?.filter(u => u.branch === branchFilter) : data
-    const uniqueBranches = Array.from(new Set(data?.map(u => u.branch).filter(Boolean)))
+    const filtered = branchFilter
+      ? data?.filter((u) => u.branch === branchFilter)
+      : data
+
+    const uniqueBranches = Array.from(
+      new Set(data?.map((u) => u.branch).filter(Boolean))
+    ) as string[]
+
     setBranches(uniqueBranches)
     setUsers(filtered ?? [])
   }
 
-  function updateAnnouncement(index: number, field: string, value: any) {
-    const updated = [...announcements]
-    updated[index][field] = value
-    setAnnouncements(updated)
+  // ✅ Type-safe update function
+  function updateAnnouncement<K extends keyof Announcement>(
+    index: number,
+    field: K,
+    value: Announcement[K]
+  ) {
+    setAnnouncements((prev) => {
+      const updated = [...prev]
+      updated[index] = { ...updated[index], [field]: value }
+      return updated
+    })
   }
 
   function addAnnouncement() {
-    setAnnouncements([...announcements, { title: "", description: "", file: null, scheduled_for: "" }])
+    setAnnouncements((prev) => [
+      ...prev,
+      { title: "", description: "", file: null, scheduled_for: "" }
+    ])
   }
 
   async function submitMatangazo() {
@@ -60,11 +97,12 @@ export default function PastorMatangazo() {
 
     try {
       for (const ann of announcements) {
-        let fileUrl = null
+        let fileUrl: string | null = null
 
         if (ann.file) {
+          // ✅ TypeScript-safe file handling
           const fileName = `${Date.now()}_${ann.file.name}`
-          const { data, error: uploadError } = await supabase.storage
+          const { error: uploadError } = await supabase.storage
             .from("matangazo")
             .upload(fileName, ann.file)
 
@@ -74,7 +112,7 @@ export default function PastorMatangazo() {
             .from("matangazo")
             .getPublicUrl(fileName)
 
-          fileUrl = urlData?.publicUrl
+          fileUrl = urlData?.publicUrl ?? null
         }
 
         await supabase.from("pastor_announcements").insert({
@@ -104,16 +142,23 @@ export default function PastorMatangazo() {
     <div className={styles.container}>
       <h3>📣 Tuma Matangazo kwa Mtumishi</h3>
 
+      {/* Branch Filter */}
       <div className={styles.formGroup}>
         <label>Chuja kwa Tawi</label>
-        <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)}>
+        <select
+          value={branchFilter}
+          onChange={(e) => setBranchFilter(e.target.value)}
+        >
           <option value="">-- Tawi --</option>
           {branches.map((b, i) => (
-            <option key={i} value={b}>{b}</option>
+            <option key={i} value={b}>
+              {b}
+            </option>
           ))}
         </select>
       </div>
 
+      {/* User Selector */}
       <div className={styles.formGroup}>
         <label>Chagua Mtumishi</label>
         <input
@@ -121,20 +166,26 @@ export default function PastorMatangazo() {
           list="userList"
           value={selectedUser}
           onChange={(e) => {
-            setSelectedUser(e.target.value)
-            const found = users.find(u => u.full_name === e.target.value)
+            const name = e.target.value
+            setSelectedUser(name)
+            const found = users.find((u) => u.full_name === name)
             setRole(found?.role ?? "")
           }}
           placeholder="Tafuta jina..."
         />
         <datalist id="userList">
-          {users.map(u => (
+          {users.map((u) => (
             <option key={u.id} value={u.full_name} />
           ))}
         </datalist>
-        {role && <p><strong>Role:</strong> {role}</p>}
+        {role && (
+          <p>
+            <strong>Role:</strong> {role}
+          </p>
+        )}
       </div>
 
+      {/* Announcements */}
       {announcements.map((ann, i) => (
         <div key={i} className={styles.announcementCard}>
           <label>Tangazo #{i + 1}</label>
@@ -153,18 +204,24 @@ export default function PastorMatangazo() {
           <input
             type="datetime-local"
             value={ann.scheduled_for}
-            onChange={(e) => updateAnnouncement(i, "scheduled_for", e.target.value)}
+            onChange={(e) =>
+              updateAnnouncement(i, "scheduled_for", e.target.value)
+            }
           />
           <input
             type="file"
             accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,image/*"
-            onChange={(e) => updateAnnouncement(i, "file", e.target.files?.[0] ?? null)}
+            onChange={(e) =>
+              updateAnnouncement(i, "file", e.target.files?.[0] ?? null)
+            }
           />
         </div>
       ))}
 
       <button onClick={addAnnouncement}>➕ Ongeza Tangazo</button>
-      <button onClick={submitMatangazo} disabled={submitting}>📤 Tuma Matangazo</button>
+      <button onClick={submitMatangazo} disabled={submitting}>
+        📤 Tuma Matangazo
+      </button>
 
       {message && <p className={styles.message}>{message}</p>}
     </div>

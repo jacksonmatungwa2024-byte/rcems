@@ -7,7 +7,7 @@ import FileTable from "../components/FileTable"
 import CleanupSuggestions from "../components/CleanupSuggestions"
 import { useBucket } from "../components/BucketContext"
 
-export default function StorageDashboard(): JSX.Element {
+export default function StorageDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
   const { selectedBucket } = useBucket()
 

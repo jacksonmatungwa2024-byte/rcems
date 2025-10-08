@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function StorageOverview(): JSX.Element {
+export default function StorageOverview() {
   const [plan, setPlan] = useState<"free" | "pro" | "custom" | null>(null)
   const [customDbLimit, setCustomDbLimit] = useState("")
   const [customStorageLimit, setCustomStorageLimit] = useState("")

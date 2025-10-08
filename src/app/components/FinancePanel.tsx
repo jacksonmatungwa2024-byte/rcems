@@ -9,19 +9,32 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+type FormState = {
+  title: string
+  description: string
+  amount: string
+  currency: string
+  requested_by: string
+  requested_by_id: number
+  department: string
+  note: string
+  source_pending_id: number | null
+}
+
 export default function FinancePanel() {
   const [activeTab, setActiveTab] = useState("create")
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    amount: "",
-    currency: "TZS",
-    requested_by: "Finance Officer",
-    requested_by_id: 1,
-    department: "",
-    note: "",
-    source_pending_id: null
-  })
+ const [form, setForm] = useState<FormState>({
+  title: "",
+  description: "",
+  amount: "",
+  currency: "TZS",
+  requested_by: "Finance Officer",
+  requested_by_id: 1,
+  department: "",
+  note: "",
+  source_pending_id: null
+})
+
   const [approvedBudgets, setApprovedBudgets] = useState<any[]>([])
   const [declinedBudgets, setDeclinedBudgets] = useState<any[]>([])
   const [pendingBudgets, setPendingBudgets] = useState<any[]>([])

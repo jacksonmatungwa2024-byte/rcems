@@ -22,7 +22,7 @@ type Announcement = {
   approved_by?: string
 }
 
-export default function MediaPanel(): JSX.Element {
+export default function MediaPanel() {
   const [matangazo, setMatangazo] = useState<Announcement[]>([])
   const [statusFilter, setStatusFilter] = useState("")
   const [receiverFilter, setReceiverFilter] = useState("")
