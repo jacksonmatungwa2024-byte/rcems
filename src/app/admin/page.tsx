@@ -1,20 +1,18 @@
-"use client"
-import { ReactElement } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+import AdminTabManager from "../components/AdminTabManager";
+import AdminReactivation from "../components/AdminReactivation";
+import UserManagement from "../components/UserManagement";
+import UserRegistration from "../components/UserRegistration";
+import AdminDataManagement from "../components/AdminDataMangement";
+import StorageDashboard from "../components/StorageDashboard";
+import AdminProfile from "../components/AdminProfile";
+import { BucketProvider } from "../components/BucketContext";
 
 
-
-import  { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
-import AdminTabManager from "../components/AdminTabManager"
-import AdminReactivation from "../components/AdminReactivation"
-
-import UserManagement from "../components/UserManagement"
-import UserRegistration from "../components/UserRegistration"
-import AdminDataManagement from "../components/AdminDataMangement"
-import StorageDashboard from "../components/StorageDashboard"
-import AdminProfile from "../components/AdminProfile"
-import { BucketProvider } from "../components/BucketContext"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -33,8 +31,7 @@ const tabs = [
 ]
 
 
-
-export default function AdminPanel(): ReactElement {
+export default function AdminPanel() {
 
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("tabManager")
