@@ -9,7 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function BucketExplorer(): JSX.Element {
+export default function BucketExplorer() {
   const { setSelectedBucket } = useBucket()
   const [buckets, setBuckets] = useState<{ id: string }[]>([])
   const [bucketSizes, setBucketSizes] = useState<Record<string, number>>({})
