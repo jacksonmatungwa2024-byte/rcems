@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js"
 
+// ✅ Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function AdminDataManagement(): JSX.Element {
+// ✅ No explicit JSX.Element return type (fixes Vercel build)
+export default function AdminDataManagement() {
   const [tables, setTables] = useState<{ name: string }[]>([])
   const [selectedTable, setSelectedTable] = useState<string | null>(null)
   const [rows, setRows] = useState<any[]>([])
@@ -16,9 +18,10 @@ export default function AdminDataManagement(): JSX.Element {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set())
   const [primaryKey, setPrimaryKey] = useState<string>("")
   const [status, setStatus] = useState<string>("")
-  const [editingCell, setEditingCell] = useState<{ rowId: string, column: string } | null>(null)
+  const [editingCell, setEditingCell] = useState<{ rowId: string; column: string } | null>(null)
   const [editValue, setEditValue] = useState("")
 
+  // ✅ Fetch table list from Supabase RPC
   useEffect(() => {
     const fetchTables = async () => {
       const { data, error } = await supabase.rpc("list_tables")
@@ -26,6 +29,7 @@ export default function AdminDataManagement(): JSX.Element {
     }
     fetchTables()
   }, [])
+
   const loadTableData = async (tableName: string) => {
     setSelectedTable(tableName)
     setStatus("⏳ Inapakia data...")
@@ -46,7 +50,10 @@ export default function AdminDataManagement(): JSX.Element {
     }
 
     const sample = data[0]
-    const key = Object.keys(sample).find(k => k === "id" || k.endsWith("_id")) || Object.keys(sample)[0]
+    const key =
+      Object.keys(sample).find(k => k === "id" || k.endsWith("_id")) ||
+      Object.keys(sample)[0]
+
     setPrimaryKey(key)
     setRows(data)
     setFormData(Object.fromEntries(Object.keys(sample).map(k => [k, ""])))
@@ -57,31 +64,31 @@ export default function AdminDataManagement(): JSX.Element {
   const resetSequence = async () => {
     const sequenceName = `${selectedTable}_id_seq`
     const { error } = await supabase.rpc("reset_sequence", { seq_name: sequenceName })
-    if (error) {
-      setStatus(`❌ Imeshindikana: ${error.message}`)
-    } else {
-      setStatus("✅ Namba imewekwa upya kuanzia 0.")
-    }
+    if (error) setStatus(`❌ Imeshindikana: ${error.message}`)
+    else setStatus("✅ Namba imewekwa upya kuanzia 0.")
   }
 
   const saveEdit = async (rowId: string, column: string) => {
     setStatus("⏳ Inahifadhi mabadiliko...")
-    const { error } = await supabase.from(selectedTable!).update({ [column]: editValue }).eq(primaryKey, rowId)
-    if (error) {
-      setStatus(`❌ Imeshindikana: ${error.message}`)
-    } else {
+    const { error } = await supabase
+      .from(selectedTable!)
+      .update({ [column]: editValue })
+      .eq(primaryKey, rowId)
+
+    if (error) setStatus(`❌ Imeshindikana: ${error.message}`)
+    else {
       setStatus("✅ Imesasishwa.")
       loadTableData(selectedTable!)
     }
     setEditingCell(null)
   }
+
   const handleInsert = async () => {
     if (!selectedTable) return
     setStatus("⏳ Inatuma data mpya...")
     const { error } = await supabase.from(selectedTable).insert([formData])
-    if (error) {
-      setStatus(`❌ Imeshindikana: ${error.message}`)
-    } else {
+    if (error) setStatus(`❌ Imeshindikana: ${error.message}`)
+    else {
       setStatus("✅ Data mpya imeongezwa.")
       loadTableData(selectedTable)
     }
@@ -90,9 +97,8 @@ export default function AdminDataManagement(): JSX.Element {
   const deleteSelected = async () => {
     const ids = Array.from(selectedRows)
     const { error } = await supabase.from(selectedTable!).delete().in(primaryKey, ids)
-    if (error) {
-      setStatus(`❌ Imeshindikana: ${error.message}`)
-    } else {
+    if (error) setStatus(`❌ Imeshindikana: ${error.message}`)
+    else {
       setRows(prev => prev.filter(row => !selectedRows.has(row[primaryKey])))
       setSelectedRows(new Set())
       setStatus("✅ Rows zilizochaguliwa zimefutwa.")
@@ -102,29 +108,36 @@ export default function AdminDataManagement(): JSX.Element {
   const deleteAll = async () => {
     const ids = rows.map(row => row[primaryKey]).filter(Boolean)
     const { error } = await supabase.from(selectedTable!).delete().in(primaryKey, ids)
-    if (error) {
-      setStatus(`❌ Imeshindikana: ${error.message}`)
-    } else {
+    if (error) setStatus(`❌ Imeshindikana: ${error.message}`)
+    else {
       setRows([])
       setSelectedRows(new Set())
       setStatus("✅ Data zote zimefutwa.")
     }
   }
 
-  
+  // ✅ JSX UI
   return (
     <div style={styles.container}>
       <h2 style={styles.header}>🧹 Usimamizi wa Data kwa Admin</h2>
-      <p style={styles.subtext}>Chagua jedwali, angalia data, hariri, ongeza au weka upya namba kwa hekima ya kiroho.</p>
+      <p style={styles.subtext}>
+        Chagua jedwali, angalia data, hariri, ongeza au weka upya namba kwa hekima ya kiroho.
+      </p>
 
+      {/* Table List */}
       <div style={styles.tableList}>
         {tables.map(table => (
-          <button key={table.name} onClick={() => loadTableData(table.name)} style={styles.tableButton}>
+          <button
+            key={table.name}
+            onClick={() => loadTableData(table.name)}
+            style={styles.tableButton}
+          >
             📁 {table.name}
           </button>
         ))}
       </div>
 
+      {/* Data Panel */}
       {selectedTable && (
         <div style={styles.panel}>
           <h3 style={styles.subheader}>📂 {selectedTable} ({rows.length} rows)</h3>
@@ -149,23 +162,32 @@ export default function AdminDataManagement(): JSX.Element {
                           checked={selectedRows.has(row[primaryKey])}
                           onChange={() => {
                             const copy = new Set(selectedRows)
-                            copy.has(row[primaryKey]) ? copy.delete(row[primaryKey]) : copy.add(row[primaryKey])
+                            copy.has(row[primaryKey])
+                              ? copy.delete(row[primaryKey])
+                              : copy.add(row[primaryKey])
                             setSelectedRows(copy)
                           }}
                         />
                       </td>
                       {Object.keys(row).map(col => (
-                        <td key={col} style={styles.td} onClick={() => {
-                          setEditingCell({ rowId: row[primaryKey], column: col })
-                          setEditValue(String(row[col]))
-                        }}>
-                          {editingCell?.rowId === row[primaryKey] && editingCell?.column === col ? (
+                        <td
+                          key={col}
+                          style={styles.td}
+                          onClick={() => {
+                            setEditingCell({ rowId: row[primaryKey], column: col })
+                            setEditValue(String(row[col]))
+                          }}
+                        >
+                          {editingCell?.rowId === row[primaryKey] &&
+                          editingCell?.column === col ? (
                             <input
                               type="text"
                               value={editValue}
                               onChange={e => setEditValue(e.target.value)}
                               onBlur={() => saveEdit(row[primaryKey], col)}
-                              onKeyDown={e => e.key === "Enter" && saveEdit(row[primaryKey], col)}
+                              onKeyDown={e =>
+                                e.key === "Enter" && saveEdit(row[primaryKey], col)
+                              }
                               style={styles.input}
                               autoFocus
                             />
@@ -183,20 +205,32 @@ export default function AdminDataManagement(): JSX.Element {
             )}
           </div>
 
+          {/* Actions */}
           <div style={styles.actions}>
-            <button onClick={deleteSelected} disabled={selectedRows.size === 0} style={styles.actionBtn}>
+            <button
+              onClick={deleteSelected}
+              disabled={selectedRows.size === 0}
+              style={styles.actionBtn}
+            >
               🗑️ Futa Zilizochaguliwa ({selectedRows.size})
             </button>
-            <button onClick={deleteAll} style={{ ...styles.actionBtn, background: "#d32f2f" }}>
+            <button
+              onClick={deleteAll}
+              style={{ ...styles.actionBtn, background: "#d32f2f" }}
+            >
               🧨 Futa Data Zote
             </button>
             {primaryKey === "id" && (
-              <button onClick={resetSequence} style={{ ...styles.actionBtn, background: "#ff9800" }}>
+              <button
+                onClick={resetSequence}
+                style={{ ...styles.actionBtn, background: "#ff9800" }}
+              >
                 🔄 Weka Upya Namba (Anza 0)
               </button>
             )}
           </div>
 
+          {/* Insert New Data */}
           <h4 style={styles.formHeader}>➕ Ongeza Data Mpya</h4>
           <div style={styles.form}>
             {Object.keys(formData).map(field => (
@@ -205,12 +239,17 @@ export default function AdminDataManagement(): JSX.Element {
                 <input
                   type="text"
                   value={formData[field]}
-                  onChange={e => setFormData(prev => ({ ...prev, [field]: e.target.value }))}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, [field]: e.target.value }))
+                  }
                   style={styles.input}
                 />
               </div>
             ))}
-            <button onClick={handleInsert} style={{ ...styles.actionBtn, background: "#009688" }}>
+            <button
+              onClick={handleInsert}
+              style={{ ...styles.actionBtn, background: "#009688" }}
+            >
               ✅ Tuma Data
             </button>
           </div>
@@ -222,7 +261,7 @@ export default function AdminDataManagement(): JSX.Element {
   )
 }
 
-
+// ✅ Inline styles
 const styles: Record<string, React.CSSProperties> = {
   container: {
     padding: 16,

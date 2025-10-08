@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@supabase/supabase-js"
-import AdminTabManager from "../components/AdminTabManager"
-import AdminReactivation from "../components/AdminReactivation"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+import AdminTabManager from "../components/AdminTabManager";
+import AdminReactivation from "../components/AdminReactivation";
+import UserManagement from "../components/UserManagement";
+import UserRegistration from "../components/UserRegistration";
+import AdminDataManagement from "../components/AdminDataMangement";
+import StorageDashboard from "../components/StorageDashboard";
+import AdminProfile from "../components/AdminProfile";
+import { BucketProvider } from "../components/BucketContext";
 
-import UserManagement from "../components/UserManagement"
-import UserRegistration from "../components/UserRegistration"
-import AdminDataManagement from "../components/AdminDataMangement"
-import StorageDashboard from "../components/StorageDashboard"
-import AdminProfile from "../components/AdminProfile"
-import { BucketProvider } from "../components/BucketContext"
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,7 +30,9 @@ const tabs = [
   { id: "profile", label: "👤 Profile", component: <AdminProfile /> }
 ]
 
-export default function AdminPanel(): JSX.Element {
+
+export default function AdminPanel() {
+
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("tabManager")
   const [isMobile, setIsMobile] = useState(false)

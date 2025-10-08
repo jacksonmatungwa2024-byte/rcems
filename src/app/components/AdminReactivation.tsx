@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-export default function AdminReactivation(): JSX.Element {
+export default function AdminReactivation() {
   const [users, setUsers] = useState<any[]>([])
 
   useEffect(() => {
