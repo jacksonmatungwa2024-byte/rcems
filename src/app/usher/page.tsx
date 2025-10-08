@@ -11,7 +11,7 @@ import SajiliUshuhuda from "../components/SajiliUshuhuda";
 import ReportsDashboard from "../components/ReportsDashboard";
 import UsherProfile from "../components/UsherProfile";
 
-// ✅ Define a shared type for allowed tab names
+// ✅ Shared tab type
 export type TabType =
   | "home"
   | "usajili"
@@ -20,25 +20,32 @@ export type TabType =
   | "messages"
   | "profile";
 
+// ✅ Initialize Supabase client (client-side only)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  }
 );
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>("home");
-
   const [usajiliSub, setUsajiliSub] = useState<
     "muumini" | "mahadhurio" | "wokovu" | "ushuhuda"
   >("muumini");
-
   const [user, setUser] = useState<any>(null);
 
+  // ✅ Fetch user session and details
   useEffect(() => {
     const loadUser = async () => {
       const { data: sessionData, error: sessionError } =
         await supabase.auth.getSession();
       const email = sessionData?.session?.user?.email;
+
       if (sessionError || !email) {
         window.location.href = "/login";
         return;
@@ -50,11 +57,7 @@ export default function Home() {
         .eq("email", email)
         .single();
 
-      if (
-        userError ||
-        !userData ||
-        !["admin", "usher"].includes(userData.role)
-      ) {
+      if (userError || !userData || !["admin", "usher"].includes(userData.role)) {
         window.location.href = "/login";
         return;
       }
@@ -64,6 +67,24 @@ export default function Home() {
 
     loadUser();
   }, []);
+
+  // ✅ Logout handler (inside component)
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
+
+  // ✅ Inline button styles
+  const logoutBtnStyle: React.CSSProperties = {
+    padding: "8px 16px",
+    background: "#d32f2f",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    fontWeight: 600,
+    cursor: "pointer",
+    marginTop: 12,
+  };
 
   const tabStyle = (active: boolean): React.CSSProperties => ({
     padding: "10px 16px",
@@ -102,6 +123,7 @@ export default function Home() {
 
   const visibleTabs = allowedTabs[role] || [];
 
+  // ✅ UI Layout
   return (
     <div
       style={{
@@ -130,6 +152,7 @@ export default function Home() {
             🏠 Home
           </button>
         )}
+
         {visibleTabs.includes("usajili") && (
           <button
             style={tabStyle(activeTab === "usajili")}
@@ -138,6 +161,7 @@ export default function Home() {
             🗂️ Usajili
           </button>
         )}
+
         {visibleTabs.includes("mafunzo") && (
           <button
             style={tabStyle(activeTab === "mafunzo")}
@@ -146,6 +170,7 @@ export default function Home() {
             📚 Mafunzo
           </button>
         )}
+
         {visibleTabs.includes("reports") && (
           <button
             style={tabStyle(activeTab === "reports")}
@@ -154,6 +179,7 @@ export default function Home() {
             📊 Reports
           </button>
         )}
+
         {visibleTabs.includes("profile") && (
           <button
             style={tabStyle(activeTab === "profile")}
@@ -162,6 +188,11 @@ export default function Home() {
             👤 Profile
           </button>
         )}
+
+        {/* ✅ Logout Button */}
+        <button onClick={handleLogout} style={logoutBtnStyle}>
+          🚪 Toka / Logout
+        </button>
       </aside>
 
       {/* Main Content */}
@@ -241,16 +272,9 @@ export default function Home() {
           </div>
         )}
 
-        {activeTab === "mafunzo" && (
-          <MafunzoMuumini setActiveTab={setActiveTab} />
-        )}
-        {activeTab === "reports" && (
-          <ReportsDashboard setActiveTab={setActiveTab} />
-        )}
-
-        {activeTab === "profile" && (
-          <UsherProfile onClose={() => setActiveTab("home")} />
-        )}
+        {activeTab === "mafunzo" && <MafunzoMuumini setActiveTab={setActiveTab} />}
+        {activeTab === "reports" && <ReportsDashboard setActiveTab={setActiveTab} />}
+        {activeTab === "profile" && <UsherProfile onClose={() => setActiveTab("home")} />}
       </main>
     </div>
   );
